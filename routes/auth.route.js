@@ -40,8 +40,26 @@ router.get("/auth/login", (req, res) => {
   res.render("auth/login");
 });
 
-router.get("/dashboard", isLoggedIn, (req, res) => {
-  res.render("dashboard/index");
+router.get("/auth/profile/:id", (req, res) => {
+  User.findById(req.params.id)
+  .then((user) => {
+    res.render("auth/profile", { user });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+});
+
+router.post("/auth/profile/:id", (req, res) => {
+  // req.body
+  User.findByIdAndUpdate(req.params.id, req.body)
+  .then(() => {
+    res.redirect("/dashboard");
+    console.log("edit success");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 });
 
 // Login Route

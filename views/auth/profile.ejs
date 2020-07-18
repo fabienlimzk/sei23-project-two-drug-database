@@ -1,0 +1,30 @@
+<div class="container mt-3">
+  <h2>Edit Profile</h2>
+  <form action="/auth/profile/<%= user._id %>" method="POST">
+    <div>
+      <label>First Name: </label>
+      <input name="firstname" type="text" value="<%= user.firstname %>" />
+    </div>
+    <div>
+      <label>Last Name: </label>
+      <input name="lastname" type="text" value="<%= user.lastname %>" />
+    </div>
+    <div>
+      <label>Date of Birth: </label>
+      <input name="dateOfBirth" type="text" value="<%= user.dateOfBirth %>" />
+    </div>
+    <div>
+      <label>Phone Number: </label>
+      <input name="phone" type="number" value="<%= user.phone %>" />
+    </div>
+    <div>
+      <label>Email Address: </label>
+      <input name="email" type="text" value="<%= user.email %>" />
+    </div>
+    <div>
+      <label>Password: </label>
+      <input name="password" type="password" placeholder="********" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+</div>

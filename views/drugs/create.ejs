@@ -1,0 +1,26 @@
+<div class="container mt-3">
+  <h2>Create Drug Information</h2>
+  <form action="/drugs/create" method="POST">
+    <div>
+      <label>Drug Name: </label>
+      <input name="name" type="text" placeholder="* required" />
+    </div>
+    <div>
+      <label>Drug Class: </label>
+      <input name="drugClass" type="text" placeholder="* not required" />
+    </div>
+    <div>
+      <label>Recommended Dose: </label>
+      <input name="recommendedDose" type="text" placeholder="* not required" />
+    </div>
+    <div>
+      <label>Description: </label>
+      <input name="description" type="text" placeholder="* not required" />
+    </div>
+    <div>
+      <label>Image Url: </label>
+      <input name="imageUrl" type="text" placeholder="* not required" />
+    </div>
+    <button type="submit" class="btn btn-primary">Created</button>
+  </form>
+</div>

@@ -30,12 +30,12 @@ var userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // list: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref:"List",
-  //   }
-  // ],
+  drugs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Drug",
+    }
+  ],
 });
 
 userSchema.pre("save", function (next){

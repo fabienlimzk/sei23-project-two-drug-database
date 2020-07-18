@@ -52,9 +52,8 @@ server.get("/", (req, res) => {
 });
 
 // all routes
+server.use("/", require("./routes/drug.route"));
 server.use(require("./routes/auth.route"));
-// server.use("/senior", require("./routes/senior.route"));
-// server.use("/helper", require("./routes/helper.route"));
 
 // connect to PORT
 server.listen(process.env.PORT, () =>

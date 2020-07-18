@@ -1,1 +1,24 @@
 <h1>Dashboard</h1>
+
+<table border="1">
+  <thead>
+    <tr>
+      <td>Image</td>
+      <td>Drug Name</td>
+      <td>Drug Class</td>
+      <td>Recommended Dose</td>
+      <td>Description</td>
+      <td>Action</td>
+    </tr>
+  </thead>
+
+  <% drugs.forEach((drug) => { %>
+    <tr>
+      <td><%= drug.imageUrl %></td>
+      <td><%= drug.name %></td>
+      <td><%= drug.drugClass %></td>
+      <td><%= drug.recommendedDose %></td>
+      <td><%= drug.description %></td>
+    </tr>
+  <% }) %>
+</table>
