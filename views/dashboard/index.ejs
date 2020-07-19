@@ -8,17 +8,27 @@
       <td>Drug Class</td>
       <td>Recommended Dose</td>
       <td>Description</td>
+      <td>Status</td>
       <td>Action</td>
     </tr>
   </thead>
 
   <% drugs.forEach((drug) => { %>
     <tr>
-      <td><%= drug.imageUrl %></td>
-      <td><%= drug.name %></td>
+      <td><img src="<%= drug.imageUrl %>" alt="image"></td>
+      <td><a href="/view/<%= drug._id %>"><%= drug.name %></a></td>
       <td><%= drug.drugClass %></td>
       <td><%= drug.recommendedDose %></td>
       <td><%= drug.description %></td>
+      <td><%= drug.status %></td>
+      <td>
+        <!-- TODO:  restrict user from reviewing their own "drug" -->
+        <% if (drug.status == "info pending to be provided" || drug.status == "info pending to be amended"){ %>
+          <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
+        <% } else if (drug.status == "info pending to be reviewed"){ %> 
+          <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
+        <% } %>
+      </td>
     </tr>
   <% }) %>
 </table>

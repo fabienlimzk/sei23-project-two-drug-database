@@ -27,8 +27,8 @@ router.post("/auth/register", async (req, res) => {
 
     if (savedUser) {
       passport.authenticate("local", {
-        successRedirect: "/dashboard", //after login success
-        successFlash: "You have logged in!"
+        successRedirect: "/auth/login", //after login success
+        successFlash: "Account have been created successfully!"
       })(req, res);
     }
   } catch (error) {
@@ -54,8 +54,8 @@ router.post("/auth/profile/:id", (req, res) => {
   // req.body
   User.findByIdAndUpdate(req.params.id, req.body)
   .then(() => {
+    req.flash("success", "Profile updated");
     res.redirect("/dashboard");
-    console.log("edit success");
   })
   .catch((err) => {
     console.log(err);
@@ -67,16 +67,16 @@ router.post("/auth/login",
   passport.authenticate("local", {
     successRedirect: "/dashboard", //after login success
     failureRedirect: "/auth/login", //if fail
-    failureFlash: "Invalid username or password",
+    failureFlash: "Invalid emaill address or password",
     successFlash: "You have logged in!"
   })
 );
 
 // Logout Route
-router.get("/auth/logout", (request, response) => {
-  request.logout(); //clear and break session
-  request.flash("success", "You have logged out!");
-  response.redirect("/auth/login");
+router.get("/auth/logout", (req, res) => {
+  req.logout(); //clear and break session
+  req.flash("success", "You have logged out!");
+  res.redirect("/auth/login");
 });
 
 module.exports = router;

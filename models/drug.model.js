@@ -13,8 +13,8 @@ const drugSchema = Schema(
     imageUrl: String,
     status: {
       type: String,
-      enum: ["open", "info pending to be provided", "info pending to be reviewed", "completed"],
-      default: "open",
+      enum: ["info pending to be provided", "info pending to be amended", "info pending to be reviewed", "completed"],
+      default: "info pending to be provided",
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -26,10 +26,12 @@ const drugSchema = Schema(
       ref: "User"
       }
     ],
-    reviewedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    },
+    reviewedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
   },
   { timestamps: true }
 );

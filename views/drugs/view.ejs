@@ -1,0 +1,18 @@
+<div>
+  <h2>About <%= drug.name %></h2>
+  <img src="<%= drug.imageUrl %>" alt="image">
+  <div>Drug Class: <%= drug.drugClass %></div>
+  <div>Recommended Dose: <%= drug.recommendedDose %></div>
+  <div>Description: <%= drug.description %></div>
+  <div>Created By: <%= drug.createdBy.firstname %> <%= drug.createdBy.lastname %></div>
+  <div>Edited By: 
+    <% drug.editedBy.forEach((user) => { %>
+      <%= user.firstname %> <%= user.lastname %>
+    <% }) %> 
+  </div>
+  <div>Reviewed By: 
+    <% drug.reviewedBy.forEach((user) => { %>
+      <%= user.firstname %> <%= user.lastname %>
+    <% }) %> 
+  </div>
+</div>
