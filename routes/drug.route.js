@@ -48,7 +48,7 @@ router.post("/create", async (req, res) => {
 
       if (savedDrug) {
         User.findByIdAndUpdate(req.user._id, {
-          $push: { drugs: drug._id }
+          $push: { created: drug._id }
         })
         .then(() => {
           req.flash("success", "Drug created!");
@@ -81,7 +81,7 @@ router.get("/view/:id", async (req, res) => {
   }
 });
 
-router.get("/edit/:id", (req, res) => {
+router.get("/edit/:id", isLoggedIn, (req, res) => {
   Drug.findById(req.params.id)
   .then((drug) => {
     res.render("drugs/edit", { drug });
@@ -92,25 +92,35 @@ router.get("/edit/:id", (req, res) => {
 });
 
 // TODO: if any of the field(s) is empty, status != "info pending to be reviewed"
-router.post("/edit/:id", (req, res) => {
-  Drug.findById(req.params.id)
-  .then((drug) => {
-    drug.name = req.body.name;
-    drug.drugClass = req.body.drugClass;
-    drug.recommendedDose = req.body.recommendedDose;
-    drug.description = req.body.description;
-    drug.imageUrl = req.body.imageUrl;
-    drug.editedBy = req.user._id;
-    drug.status = "info pending to be reviewed";
-    drug.save()
-    .then(() => {
-      req.flash("success", "Drug updated");
-      res.redirect("/dashboard");
-    });
-  });
+router.post("/edit/:id", async (req, res) => {
+  try {
+    let finalData = {
+      name: req.body.name,
+      drugClass: req.body.drugClass,
+      recommendedDose: req.body.recommendedDose,
+      description: req.body.description,
+      imageUrl: req.body.imageUrl,
+      editedBy: req.user._id,
+      status: "info pending to be reviewed",
+    }
+
+    let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+
+    if (editedDrug) {
+      User.findByIdAndUpdate(req.user._id, {
+        $push: { edited: req.params.id }
+      })
+      .then(() => {
+        req.flash("success", "Drug edited!");
+        res.redirect("/dashboard");
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-router.get("/review/:id", async (req, res) => {
+router.get("/review/:id", isLoggedIn, async (req, res) => {
   try {
     let drug = await Drug.findById(req.params.id)
     .populate("createdBy")
@@ -121,35 +131,56 @@ router.get("/review/:id", async (req, res) => {
   }
 });
 
-router.post("/review/approve/:id", (req, res) => {
-  Drug.findById(req.params.id)
-  .then((drug) => {
-    drug.reviewedBy = req.user._id;
-    drug.status = "completed"
-    drug.save()
-    .then(() => {
-      req.flash("success", "Drug info approved");
-      res.redirect("/dashboard");
-    });
-  });
+router.post("/review/approve/:id", async (req, res) => {
+  try {
+    let finalData = {
+      reviewedBy: req.user._id,
+      status: "completed",
+    }
+
+    let approvedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+
+    if (approvedDrug) {
+      User.findByIdAndUpdate(req.user._id, {
+        $push: { approved: req.params.id }
+      })
+      .then(() => {
+        req.flash("success", "Drug info approved!");
+        res.redirect("/dashboard");
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-router.post("/review/reject/:id", (req, res) => {
-  Drug.findById(req.params.id)
-  .then((drug) => {
-    drug.reviewedBy = req.user._id;
-    drug.status = "info pending to be amended"
-    drug.save()
-    .then(() => {
-      req.flash("success", "Drug info rejected");
-      res.redirect("/dashboard");
-    });
-  });
+router.post("/review/reject/:id", async (req, res) => {
+  try {
+    let finalData = {
+      reviewedBy: req.user._id,
+      status: "info pending to be amended",
+    }
+
+    let rejectedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+
+    if (rejectedDrug) {
+      User.findByIdAndUpdate(req.user._id, {
+        $push: { rejected: req.params.id }
+      })
+      .then(() => {
+        req.flash("error", "Drug info rejected!");
+        res.redirect("/dashboard");
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-router.get("/delete/:drugid", (req, res) => {
+// TODO: remove drugs ref in user
+router.get("/delete/:id", (req, res) => {
   User.findByIdAndUpdate(req.user._id, { $pull: {
-      drugs: req.params.drugid 
+      drugs: req.params.id 
     } 
   })
   .then(() => {

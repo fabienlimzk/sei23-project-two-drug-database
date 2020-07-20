@@ -27,29 +27,31 @@ var userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    // isLength: {
-    //   errorMessage: "Password should be at least 6 chars long",
-    //   options: { min: 7},
-    // }
   },
-  drugs: [
+  created: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Drug",
     }
   ],
-  // edited: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Drug",
-  //   }
-  // ],
-  // reviewed: [
-  //   {
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: "Drug",
-  //   }
-  // ],
+  edited: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Drug",
+    }
+  ],
+  approved: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Drug",
+      }
+    ],
+  rejected: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Drug",
+      }
+  ],
   isAdmin: {
     type: Boolean,
     default: false,

@@ -15,7 +15,7 @@
           <td>Reviewed By</td>
           <td>Action</td>
           <td>Delete?</td>
-        <%} else if (!currentUser.isAdmin) { %>
+        <% } else if (!currentUser.isAdmin) { %>
           <td>Image</td>
           <td>Drug Name</td>
           <td>Drug Class</td>
@@ -23,7 +23,7 @@
           <td>Description</td>
           <td>Status</td>
           <td>Action</td>
-        <%}%>
+        <% } %>
       </tr>
     </thead>
 
@@ -58,7 +58,7 @@
           <td>
             <a href="/delete/<%= drug._id %>" class="btn btn-danger">Yes</a>
           </td>
-        <%} else if (!currentUser.isAdmin) { %>
+        <% } else if (!currentUser.isAdmin) { %>
           <td><img src="<%= drug.imageUrl %>" alt="image"></td>
           <td><a href="/view/<%= drug._id %>"><%= drug.name %></a></td>
           <td><%= drug.drugClass %></td>
@@ -73,7 +73,7 @@
               <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
             <% } %>
           </td>
-        <%}%>%>
+        <% } %>
       </tr>
     <% }) %>
   </table>
