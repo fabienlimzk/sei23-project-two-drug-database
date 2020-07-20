@@ -7,6 +7,9 @@ router.get("/dashboard", isLoggedIn, async (req, res) => {
   try {
     let user = await User.find()
     let drugs = await Drug.find()
+    .populate("createdBy")
+    .populate("editedBy")
+    .populate("reviewedBy")
     res.render("dashboard/index", { user, drugs });
   } catch (error){
     console.log(error);
@@ -141,6 +144,22 @@ router.post("/review/reject/:id", (req, res) => {
       req.flash("success", "Drug info rejected");
       res.redirect("/dashboard");
     });
+  });
+});
+
+router.get("/delete/:drugid", (req, res) => {
+  User.findByIdAndUpdate(req.user._id, { $pull: {
+      drugs: req.params.drugid 
+    } 
+  })
+  .then(() => {
+    Drug.findByIdAndDelete(req.params.drugid)
+    .then(() => {
+      res.redirect("/dashboard");
+    })
+  })
+  .catch((err) => {
+    console.log(err);
   });
 });
 

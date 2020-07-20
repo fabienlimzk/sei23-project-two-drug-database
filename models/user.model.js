@@ -32,16 +32,28 @@ var userSchema = new mongoose.Schema({
     //   options: { min: 7},
     // }
   },
-  isAdmin: {
-    type: Boolean,
-    default: false,
-  },
   drugs: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Drug",
     }
   ],
+  // edited: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Drug",
+  //   }
+  // ],
+  // reviewed: [
+  //   {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Drug",
+  //   }
+  // ],
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.pre("save", function (next){
