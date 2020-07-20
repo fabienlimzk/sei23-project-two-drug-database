@@ -17,14 +17,20 @@ var userSchema = new mongoose.Schema({
   phone: {
     type: Number,
     required: true,
+    unique: true,
   },
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
     required: true,
+    // isLength: {
+    //   errorMessage: "Password should be at least 6 chars long",
+    //   options: { min: 7},
+    // }
   },
   isAdmin: {
     type: Boolean,

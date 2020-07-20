@@ -6,6 +6,7 @@ const drugSchema = Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     drugClass: String,
     recommendedDose: String,

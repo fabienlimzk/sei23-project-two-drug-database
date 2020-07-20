@@ -25,3 +25,8 @@
 .card-flip:hover .card-back {
   transform: rotateY(0deg);
 }
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}

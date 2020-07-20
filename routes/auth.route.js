@@ -10,29 +10,51 @@ router.get("/auth/register", (req, res) => {
 router.post("/auth/register", async (req, res) => {
   console.log(req.body);
   try {
-    let { firstname, lastname, dateOfBirth, phone, email, password } = req.body;
+    let { 
+      firstname, 
+      lastname, 
+      dateOfBirth, 
+      phone,
+      email, 
+      password 
+    } = req.body;
+
+    let emailExists = await User.exists({ email });
     
-    let user = new User(
-      {
-        firstname, 
-        lastname,
-        dateOfBirth,
-        phone,
-        email,
-        password,
+    let phoneExists = await User.exists({ phone });
+
+    if (!emailExists && !phoneExists) {
+      let user = new User(
+        {
+          firstname, 
+          lastname,
+          dateOfBirth,
+          phone,
+          email,
+          password,
+        }
+      );
+
+      let savedUser = await user.save();
+
+      if (savedUser) {
+        passport.authenticate("local", {
+          successRedirect: "/auth/login", //after login success
+          successFlash: "Account have been created successfully!"
+        })(req, res);
+      } 
+    } else {
+      throw { 
+        code: "REGISTER_EXISTS", 
+        // message: "Email already exists!" 
       }
-    );
-
-    let savedUser = await user.save();
-
-    if (savedUser) {
-      passport.authenticate("local", {
-        successRedirect: "/auth/login", //after login success
-        successFlash: "Account have been created successfully!"
-      })(req, res);
     }
   } catch (error) {
     console.log(error);
+    if (error.code == "REGISTER_EXISTS") {
+      req.flash("error", "Phone number or email address already exists!");
+      res.redirect("/auth/register");
+    }
   }
 });
 

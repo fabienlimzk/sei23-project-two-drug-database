@@ -17,29 +17,53 @@ router.get("/create", isLoggedIn, (req, res) => {
   res.render("drugs/create");
 });
 
-// TODO: Do not allow duplicates
-router.post("/create", (req, res) => {
-  let data = {
-    name: req.body.name,
-    drugClass: req.body.drugClass,
-    recommendedDose: req.body.recommendedDose,
-    description: req.body.description,
-    imageUrl: req.body.imageUrl,
-    createdBy: req.user._id,
-  }
+router.post("/create", async (req, res) => {
+  try {
+    let {
+      name,
+      drugClass,
+      recommendedDose,
+      description,
+      imageUrl,
+    } = req.body;
 
-  let drug = new Drug(data);
-  console.log(drug);
-  drug.save()
-  .then(() => {
-    User.findByIdAndUpdate(req.user._id, {
-      $push: { drugs: drug._id }
-    })
-    .then(() => {
-      req.flash("success", "Drug created!");
-      res.redirect("/dashboard");
-    });
-  })
+    let drugExists = await Drug.exists({ name });
+
+    if (!drugExists) {
+      let drug = new Drug(
+        {
+          name,
+          drugClass,
+          recommendedDose,
+          description,
+          imageUrl,
+          createdBy: req.user._id,
+        }
+      );
+      
+      let savedDrug = await drug.save();
+
+      if (savedDrug) {
+        User.findByIdAndUpdate(req.user._id, {
+          $push: { drugs: drug._id }
+        })
+        .then(() => {
+          req.flash("success", "Drug created!");
+          res.redirect("/dashboard");
+        });
+      }
+    } else {
+      throw {
+        code: "DRUG_EXISTS",
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    if (error.code == "DRUG_EXISTS") {
+      req.flash("error", "Drug already exists!");
+      res.redirect("/create");
+    }
+  }
 });
 
 router.get("/view/:id", async (req, res) => {
@@ -64,6 +88,7 @@ router.get("/edit/:id", (req, res) => {
   });
 });
 
+// TODO: if any of the field(s) is empty, status != "info pending to be reviewed"
 router.post("/edit/:id", (req, res) => {
   Drug.findById(req.params.id)
   .then((drug) => {
