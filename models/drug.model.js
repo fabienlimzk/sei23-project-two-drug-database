@@ -27,7 +27,13 @@ const drugSchema = Schema(
       ref: "User"
       }
     ],
-    reviewedBy: [
+    approvedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ],
+    rejectedBy: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

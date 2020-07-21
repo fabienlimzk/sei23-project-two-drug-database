@@ -9,7 +9,8 @@ router.get("/dashboard", isLoggedIn, async (req, res) => {
     let drugs = await Drug.find()
     .populate("createdBy")
     .populate("editedBy")
-    .populate("reviewedBy")
+    .populate("approvedBy")
+    .populate("rejectedBy")
     res.render("dashboard/index", { user, drugs });
   } catch (error){
     console.log(error);
@@ -20,6 +21,7 @@ router.get("/create", isLoggedIn, (req, res) => {
   res.render("drugs/create");
 });
 
+// TODO
 router.post("/create", async (req, res) => {
   try {
     let {
@@ -134,7 +136,7 @@ router.get("/review/:id", isLoggedIn, async (req, res) => {
 router.post("/review/approve/:id", async (req, res) => {
   try {
     let finalData = {
-      reviewedBy: req.user._id,
+      approvedBy: req.user._id,
       status: "completed",
     }
 
@@ -157,7 +159,7 @@ router.post("/review/approve/:id", async (req, res) => {
 router.post("/review/reject/:id", async (req, res) => {
   try {
     let finalData = {
-      reviewedBy: req.user._id,
+      rejectedBy: req.user._id,
       status: "info pending to be amended",
     }
 
@@ -179,19 +181,37 @@ router.post("/review/reject/:id", async (req, res) => {
 
 // TODO: remove drugs ref in user
 router.get("/delete/:id", (req, res) => {
-  User.findByIdAndUpdate(req.user._id, { $pull: {
-      drugs: req.params.id 
-    } 
-  })
-  .then(() => {
-    Drug.findByIdAndDelete(req.params.drugid)
-    .then(() => {
-      res.redirect("/dashboard");
+  if (req.user.isAdmin) {
+    Drug.findByIdAndDelete(req.params.id)
+    .then((drug) => {
+      User.findByIdAndUpdate(drug.createdBy, { $pull: {
+          created: req.params.id, edited: req.params.id, approved: req.params.id, rejected: req.params.id,
+        } 
+      })
+      .then(() => {
+        User.findByIdAndUpdate(drug.editedBy, { $pull: {
+            created: req.params.id, edited: req.params.id, approved: req.params.id, rejected: req.params.id,
+          } 
+        })
+        .then(() => {
+          User.findByIdAndUpdate(drug.approvedBy, { $pull: {
+              created: req.params.id, edited: req.params.id, approved: req.params.id, rejected: req.params.id,
+            } 
+          })
+          .then(() => {
+            User.findByIdAndUpdate(drug.rejectedBy, { $pull: {
+                created: req.params.id, edited: req.params.id, approved: req.params.id, rejected: req.params.id,
+              }
+            })
+            res.redirect("/dashboard");
+          })
+        })
+      })
     })
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 });
 
 module.exports = router;

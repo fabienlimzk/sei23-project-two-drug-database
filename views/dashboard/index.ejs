@@ -12,7 +12,8 @@
           <td>Status</td>
           <td>Created By</td>
           <td>Edited By</td>
-          <td>Reviewed By</td>
+          <td>Approved By</td>
+          <td>Rejected By</td>
           <td>Action</td>
           <td>Delete?</td>
         <% } else if (!currentUser.isAdmin) { %>
@@ -43,7 +44,12 @@
             <% }) %>
           </td>
           <td>
-            <% drug.reviewedBy.forEach((user) => { %>
+            <% drug.approvedBy.forEach((user) => { %>
+              <%= user.firstname %> <%= user.lastname %>
+            <% }) %> 
+          </td>
+          <td>
+            <% drug.rejectedBy.forEach((user) => { %>
               <%= user.firstname %> <%= user.lastname %>
             <% }) %> 
           </td>

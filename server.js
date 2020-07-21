@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const expressLayouts = require("express-ejs-layouts");
 const server = express();
 const session = require("express-session");
+const MongoStore = require('connect-mongo')(session);
 const flash = require("connect-flash");
 const passport = require("./config/passportConfig");
 // const checkUser = require("./config/loginBlocker");
@@ -32,7 +33,8 @@ server.use(
     secret: process.env.SECRET,
     saveUninitialized: true,
     resave: false,
-    cookie: { maxAge: 360000 }
+    cookie: { maxAge: 360000 },
+    store: new MongoStore({ url: process.env.MONGODBURL }),
   })
 );
 

@@ -38,10 +38,12 @@ router.post("/auth/register", async (req, res) => {
       let savedUser = await user.save();
 
       if (savedUser) {
-        passport.authenticate("local", {
-          successRedirect: "/auth/login", //after login success
-          successFlash: "Account have been created successfully!"
-        })(req, res);
+        req.flash("success", "Account have been created successfully!");
+        res.redirect("/auth/login");
+        // passport.authenticate("local", {
+        //   successRedirect: "/auth/login", //after login success
+        //   successFlash: "Account have been created successfully!"
+        // })(req, res);
       } 
     } else {
       throw { 
