@@ -6,6 +6,8 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const flash = require("connect-flash");
 const passport = require("./config/passportConfig");
+var moment = require('moment');
+var shortDateFormat = "ddd @ h:mmA"; // TODO // to put in ejs <%= moment(Date()).format(shortDateFormat) %>
 // const checkUser = require("./config/loginBlocker");
 require("dotenv").config();
 
@@ -23,7 +25,7 @@ mongoose.connect(
   }
 );
 
-server.use(express.static("public")); // look for static files in public folder
+server.use(express.static("./public")); // look for static files in public folder
 server.use(express.urlencoded({ extended: true })); // collects form data
 server.set("view engine", "ejs"); // view engine setup
 server.use(expressLayouts);
@@ -48,6 +50,9 @@ server.use(function (req, res, next){
   res.locals.currentUser = req.user;
   next();
 });
+
+server.locals.moment = moment; // this makes moment available as a variable in every EJS page
+server.locals.shortDateFormat = shortDateFormat;
 
 server.get("/", (req, res) => {
   res.redirect("/dashboard");

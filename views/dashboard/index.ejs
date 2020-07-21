@@ -1,6 +1,10 @@
 <div style="text-align: center;">
-  <h1>Dashboard</h1>
-  <table border="1" class="center">
+  <% if (currentUser.isAdmin) { %>
+    <h1>Admin Dashboard</h1>
+  <% } else if (!currentUser.isAdmin) { %>
+    <h1>Dashboard</h1>
+  <% } %>
+    <table border="1" class="center">
     <thead>
       <tr>
         <% if (currentUser.isAdmin) { %>

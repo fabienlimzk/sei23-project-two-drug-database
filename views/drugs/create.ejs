@@ -1,6 +1,6 @@
 <div class="container mt-3">
   <h2>Create Drug Information</h2>
-  <form action="/create" method="POST">
+  <form action="/create" method="POST" enctype="multipart/form-data">
     <div>
       <label>Drug Name: </label>
       <input name="name" type="text" placeholder="* required" />
@@ -18,8 +18,8 @@
       <input name="description" type="text" placeholder="* not required" />
     </div>
     <div>
-      <label>Image Url: </label>
-      <input name="imageUrl" type="text" placeholder="* not required" />
+      <label>Image Upload: </label>
+      <input name="imageUrl" type="file" />
     </div>
     <br>
     <button type="submit" class="btn btn-primary">Create</button>

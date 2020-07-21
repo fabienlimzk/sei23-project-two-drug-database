@@ -7,6 +7,7 @@ router.get("/auth/register", (req, res) => {
   res.render("auth/register");
 });
 
+// TODO: validate correct email address format and 
 router.post("/auth/register", async (req, res) => {
   console.log(req.body);
   try {

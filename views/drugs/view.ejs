@@ -10,8 +10,13 @@
       <%= user.firstname %> <%= user.lastname %>
     <% }) %> 
   </div>
-  <div>Reviewed By: 
-    <% drug.reviewedBy.forEach((user) => { %>
+  <div>Approved By: 
+    <% drug.approvedBy.forEach((user) => { %>
+      <%= user.firstname %> <%= user.lastname %>
+    <% }) %> 
+  </div>
+  <div>Rejected By: 
+    <% drug.rejectedBy.forEach((user) => { %>
       <%= user.firstname %> <%= user.lastname %>
     <% }) %> 
   </div>
