@@ -101,7 +101,7 @@ router.post("/auth/login",
 router.get("/auth/logout", (req, res) => {
   req.logout(); //clear and break session
   req.flash("success", "You have logged out!");
-  res.redirect("/auth/login");
+  res.redirect("/intro");
 });
 
 module.exports = router;

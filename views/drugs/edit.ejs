@@ -1,5 +1,5 @@
 <div class="container mt-3">
-  <h2>Edit <%= drug.name %> Info</h2>
+  <h2>Edit Information for <%= drug.name %></h2>
   <form action="/edit/<%= drug._id %>" method="POST" enctype="multipart/form-data">
     <% if (drug.imageUrl) { %>
       <img src="<%= drug.imageUrl %>" alt="image">
