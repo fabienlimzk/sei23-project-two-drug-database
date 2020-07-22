@@ -11,9 +11,9 @@ var shortDateFormat = "ddd @ h:mmA"; // TODO // to put in ejs <%= moment(Date())
 // const checkUser = require("./config/loginBlocker");
 require("dotenv").config();
 
-// connect to MongoDB
+// connect to MongoDB cloud
 mongoose.connect(
-  process.env.MONGODBURL,
+  process.env.MONGODBLIVE,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
