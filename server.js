@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const expressLayouts = require("express-ejs-layouts");
 const server = express();
+const PORT = process.env.PORT;
 const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const flash = require("connect-flash");
@@ -63,6 +64,6 @@ server.use("/", require("./routes/drug.route"));
 server.use(require("./routes/auth.route"));
 
 // connect to PORT
-server.listen(process.env.PORT, () =>
-  console.log(`connected to express on ${process.env.PORT}`)
+server.listen(PORT, () =>
+  console.log(`connected to express on ${PORT}`)
 );
