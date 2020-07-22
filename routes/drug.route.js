@@ -3,45 +3,17 @@ const User  = require("../models/user.model");
 const Drug = require("../models/drug.model");
 const isLoggedIn = require("../config/loginBlocker");
 const multer = require('multer');
-const path = require('path');
+const upload = multer({ dest: './public/uploads/' });
+const cloudinary = require("cloudinary");
 
-// storage engine
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads");
-  },
-  filename: function (req, file, cb) {
-    // file with unique names
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+router.get("/intro", async (req, res) => {
+  try {
+    let drugs = await Drug.find()
+    res.render("intro/index", { drugs });
+  } catch (error){
+    console.log(error);
   }
 });
-
-// init upload
-const upload = multer({ 
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    checkFileType(file, cb);
-  }
-});
-
-// check upload file type
-function checkFileType(file, cb){
-  // allowed ext
-  const filetypes = /jpeg|jpg|png/;
-
-  // check ext
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-  // checkmime
-  const mimetype = filetypes.test(file.mimetype);
-
-  if (mimetype && extname) {
-    return cb(null, true);
-  } else {
-    cb('Error: .jpg, .jpeg, .png only');
-  }
-}
-
 
 router.get("/dashboard", isLoggedIn, async (req, res) => {
   try {
@@ -52,7 +24,7 @@ router.get("/dashboard", isLoggedIn, async (req, res) => {
     .populate("approvedBy")
     .populate("rejectedBy")
     res.render("dashboard/index", { user, drugs });
-  } catch (error){
+  } catch (error) {
     console.log(error);
   }
 });
@@ -63,102 +35,100 @@ router.get("/create", isLoggedIn, (req, res) => {
 
 router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) => {
   try {
-    // image uploaded == true
+    // check if image uploaded == true
     if (req.file) {
-      // all fields != ""
-      if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
-        let {
-          name,
-          drugClass,
-          recommendedDose,
-          description,
-        } = req.body;
-        
-        const file = req.file;
-    
-        let drugExists = await Drug.exists({ name });
-    
-        if (!drugExists) {
-          let drug = new Drug(
-            {
-              name,
-              drugClass,
-              recommendedDose,
-              description,
-              imageUrl: "/uploads/" + file.filename,
-              createdBy: req.user._id,
-              status: "info pending to be reviewed",
+      cloudinary.uploader.upload(req.file.path, async (result) => { 
+        // check fields === "" or not
+        if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
+          let {
+            name,
+            drugClass,
+            recommendedDose,
+            description,
+          } = req.body;
+          
+          let drugExists = await Drug.exists({ name });
+      
+          if (!drugExists) {
+            let drug = new Drug(
+              {
+                name,
+                drugClass,
+                recommendedDose,
+                description,
+                imageUrl: result.url,
+                createdBy: req.user._id,
+                status: "info pending to be provided",
+              }
+            );
+      
+            let savedDrug = await drug.save();
+      
+            if (savedDrug) {
+              User.findByIdAndUpdate(req.user._id, {
+                $push: { created: drug._id }
+              })
+              .then(() => {
+                req.flash("success", "Drug created!");
+                res.redirect("/dashboard");
+              });
             }
-          );
-    
-          let savedDrug = await drug.save();
-    
-          if (savedDrug) {
-            User.findByIdAndUpdate(req.user._id, {
-              $push: { created: drug._id }
-            })
-            .then(() => {
-              req.flash("success", "Drug created!");
-              res.redirect("/dashboard");
-            });
+          } else {
+            throw {
+              code: "DRUG_EXISTS",
+            }
           }
-        } else {
-          throw {
-            code: "DRUG_EXISTS",
+        } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
+          let {
+            name,
+            drugClass,
+            recommendedDose,
+            description,
+          } = req.body;
+      
+          let drugExists = await Drug.exists({ name });
+      
+          if (!drugExists) {
+            let drug = new Drug(
+              {
+                name,
+                drugClass,
+                recommendedDose,
+                description,
+                imageUrl: result.url,
+                createdBy: req.user._id,
+                status: "info pending to be reviewed",
+              }
+            );
+      
+            let savedDrug = await drug.save();
+      
+            if (savedDrug) {
+              User.findByIdAndUpdate(req.user._id, {
+                $push: { created: drug._id }
+              })
+              .then(() => {
+                req.flash("success", "Drug created!");
+                res.redirect("/dashboard");
+              });
+            }
+          } else {
+            throw {
+              code: "DRUG_EXISTS",
+            }
           }
         }
-      } else if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
-        let {
-          name,
-          drugClass,
-          recommendedDose,
-          description,
-        } = req.body;
-        
-        const file = req.file;
-    
-        let drugExists = await Drug.exists({ name });
-    
-        if (!drugExists) {
-          let drug = new Drug(
-            {
-              name,
-              drugClass,
-              recommendedDose,
-              description,
-              imageUrl: "/uploads/" + file.filename,
-              createdBy: req.user._id,
-              status: "info pending to be provided",
-            }
-          );
-    
-          let savedDrug = await drug.save();
-    
-          if (savedDrug) {
-            User.findByIdAndUpdate(req.user._id, {
-              $push: { created: drug._id }
-            })
-            .then(() => {
-              req.flash("success", "Drug created!");
-              res.redirect("/dashboard");
-            });
-          }
-        } else {
-          throw {
-            code: "DRUG_EXISTS",
-          }
-        }
-      }
+      });
     } else if (!req.file) {
       // all fields != ""
-      if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
+      if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
         let {
           name,
           drugClass,
           recommendedDose,
           description,
         } = req.body;
-        
+    
         let drugExists = await Drug.exists({ name });
     
         if (!drugExists) {
@@ -169,7 +139,7 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
               recommendedDose,
               description,
               createdBy: req.user._id,
-              status: "info pending to be provided",
+              status: "info and image pending to be provided",
             }
           );
     
@@ -189,14 +159,14 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
             code: "DRUG_EXISTS",
           }
         }
-      } else if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
+      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
         let {
           name,
           drugClass,
           recommendedDose,
           description,
         } = req.body;
-    
+        
         let drugExists = await Drug.exists({ name });
     
         if (!drugExists) {
@@ -207,7 +177,7 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
               recommendedDose,
               description,
               createdBy: req.user._id,
-              status: "info pending to be provided",
+              status: "image pending to be provided",
             }
           );
     
@@ -243,8 +213,55 @@ router.get("/view/:id", async (req, res) => {
     let drug = await Drug.findById(req.params.id)
     .populate("createdBy")
     .populate("editedBy")
-    .populate("reviewedBy")
+    .populate("approvedBy")
+    .populate("rejectedBy")
     res.render("drugs/view", { drug });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.get("/upload-image/:id", async (req, res) => {
+  try {
+    let drug = await Drug.findById(req.params.id)
+    .populate("createdBy")
+    .populate("editedBy")
+    .populate("approvedBy")
+    .populate("rejectedBy")
+    res.render("drugs/upload-image", { drug });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post("/upload-image/:id", upload.single("imageUrl"), async (req, res) => {
+  try {
+    if (req.file) {
+      cloudinary.uploader.upload(req.file.path, async (result) => {
+        const file = req.file;
+
+        let finalData = {
+          imageUrl: "/uploads/" + file.filename,
+          editedBy: req.user._id,
+          status: "info pending to be reviewed",
+        }
+
+        let imageUploaded = await Drug.findByIdAndUpdate(req.params.id, finalData);
+      
+        if (imageUploaded) {
+          User.findByIdAndUpdate(req.user._id, {
+            $push: { edited: req.params.id }
+          })
+          .then(() => {
+            req.flash("success", "Drug image uploaded!");
+            res.redirect("/dashboard");
+          });
+        }
+      });
+    } else if (!req.file) {
+      req.flash("error", "Please upload an image!");
+      res.redirect("/upload-image/" + req.params.id);
+    }
   } catch (error) {
     console.log(error);
   }
@@ -265,66 +282,85 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
   try {
     // image uploaded == true
     if (req.file) {
-      // all fields != ""
-      if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
-        const file = req.file;
-  
-        let finalData = {
-          name: req.body.name,
-          drugClass: req.body.drugClass,
-          recommendedDose: req.body.recommendedDose,
-          description: req.body.description,
-          imageUrl: "/uploads/" + file.filename,
-          editedBy: req.user._id,
-          status: "info pending to be reviewed",
+      cloudinary.uploader.upload(req.file.path, async (result) => {
+        // all fields != ""
+        if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
+          let finalData = {
+            name: req.body.name,
+            drugClass: req.body.drugClass,
+            recommendedDose: req.body.recommendedDose,
+            description: req.body.description,
+            imageUrl: result.url,
+            editedBy: req.user._id,
+            status: "info pending to be reviewed",
+          }
+      
+          let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+      
+          if (editedDrug) {
+            User.findByIdAndUpdate(req.user._id, {
+              $push: { edited: req.params.id }
+            })
+            .then(() => {
+              req.flash("success", "Drug edited!");
+              res.redirect("/dashboard");
+            });
+          }
+        } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
+          let finalData = {
+            name: req.body.name,
+            drugClass: req.body.drugClass,
+            recommendedDose: req.body.recommendedDose,
+            description: req.body.description,
+            imageUrl: result.url,
+            editedBy: req.user._id,
+            status: "info pending to be reviewed",
+          }
+          
+          let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+      
+          if (editedDrug) {
+            User.findByIdAndUpdate(req.user._id, {
+              $push: { edited: req.params.id }
+            })
+            .then(() => {
+              req.flash("success", "Drug edited!");
+              res.redirect("/dashboard");
+            });
+          }
         }
-        
-        let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-    
-        if (editedDrug) {
-          User.findByIdAndUpdate(req.user._id, {
-            $push: { edited: req.params.id }
-          })
-          .then(() => {
-            req.flash("success", "Drug edited!");
-            res.redirect("/dashboard");
-          });
-        }
-      } else if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
-        const file = req.file;
-
-        let finalData = {
-          name: req.body.name,
-          drugClass: req.body.drugClass,
-          recommendedDose: req.body.recommendedDose,
-          description: req.body.description,
-          imageUrl: "/uploads/" + file.filename,
-          editedBy: req.user._id,
-          status: "info pending to be reviewed",
-        }
-    
-        let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-    
-        if (editedDrug) {
-          User.findByIdAndUpdate(req.user._id, {
-            $push: { edited: req.params.id }
-          })
-          .then(() => {
-            req.flash("success", "Drug edited!");
-            res.redirect("/dashboard");
-          });
-        }
-      }
+      });
     } else if (!req.file) {
       // all fields != ""
-      if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
+      if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "" || Drug.imageUrl === "") {
         let finalData = {
           name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
           editedBy: req.user._id,
-          status: "info pending to be reviewed",
+          status: "info and image pending to be provided",
+        }
+    
+        let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+    
+        if (editedDrug) {
+          User.findByIdAndUpdate(req.user._id, {
+            $push: { edited: req.params.id }
+          })
+          .then(() => {
+            req.flash("success", "Drug edited!");
+            res.redirect("/dashboard");
+          });
+        }
+      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== ""|| drug.imageUrl === "") {
+        let finalData = {
+          name: req.body.name,
+          drugClass: req.body.drugClass,
+          recommendedDose: req.body.recommendedDose,
+          description: req.body.description,
+          editedBy: req.user._id,
+          status: "image pending to be provided",
         }
         
         let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
@@ -338,16 +374,16 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             res.redirect("/dashboard");
           });
         }
-      } else if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
+      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" || drug.imageUrl === "") {
         let finalData = {
           name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
           editedBy: req.user._id,
-          status: "info pending to be provided",
+          status: "info pending to be reviewed",
         }
-    
+        
         let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
     
         if (editedDrug) {

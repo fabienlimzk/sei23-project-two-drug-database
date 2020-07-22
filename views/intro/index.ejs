@@ -1,0 +1,24 @@
+<div style="text-align: center;">
+  <h1>Drug Database</h1>
+  <table border="1" class="center">
+    <thead>
+        <td>Image</td>
+        <td>Drug Name</td>
+        <td>Drug Class</td>
+        <td>Recommended Dose</td>
+        <td>Description</td>
+      </tr>
+    </thead>
+    <% drugs.forEach((drug) => { %>
+      <tr>
+        <% if (drug.status == "completed") { %>
+          <td><img src="<%= drug.imageUrl %>" class="thumbnail" alt="No image uploaded yet!"></td>
+          <td><a href="/view/<%= drug._id %>"><%= drug.name %></a></td>
+          <td><%= drug.drugClass %></td>
+          <td><%= drug.recommendedDose %></td>
+          <td><%= drug.description %></td>
+        <% } %>
+      </tr>
+    <% }) %>
+  </table>
+</div>

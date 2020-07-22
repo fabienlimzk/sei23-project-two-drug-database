@@ -14,8 +14,8 @@ const drugSchema = Schema(
     imageUrl: String,
     status: {
       type: String,
-      enum: ["info pending to be provided", "info pending to be amended", "info pending to be reviewed", "completed"],
-      default: "info pending to be provided",
+      enum: ["info and image pending to be provided", "image pending to be provided", "info pending to be amended", "info pending to be reviewed", "completed"],
+      default: "info and image pending to be provided",
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

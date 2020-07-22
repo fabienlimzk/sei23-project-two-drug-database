@@ -35,7 +35,7 @@
     <% drugs.forEach((drug) => { %>
       <tr>
         <% if (currentUser.isAdmin) { %>
-          <td><img src="<%= drug.imageUrl %>" alt="image"></td>
+          <td><img src="<%= drug.imageUrl %>" class="thumbnail" alt="No image uploaded yet!"></td>
           <td><a href="/view/<%= drug._id %>"><%= drug.name %></a></td>
           <td><%= drug.drugClass %></td>
           <td><%= drug.recommendedDose %></td>
@@ -59,9 +59,12 @@
           </td>
           <td>
             <!-- TODO:  restrict user from reviewing their own "drug" -->
-            <% if (drug.status == "info pending to be provided" || drug.status == "info pending to be amended"){ %>
+            <% if (drug.status == "info and image pending to be provided" || drug.status == "info pending to be amended") { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
-            <% } else if (drug.status == "info pending to be reviewed"){ %> 
+            <% } else if (drug.status == "image pending to be provided") { %>
+              <a href="/upload-image/<%= drug._id %>" class="btn btn-primary">Upload Image</a>
+            <% }else if (drug.status == "info pending to be reviewed" && currentUser !== drug.editedBy) { %>
+              <!-- if (user != drug.editedBy) -->
               <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
             <% } %>
           </td>
@@ -69,7 +72,7 @@
             <a href="/delete/<%= drug._id %>" class="btn btn-danger">Yes</a>
           </td>
         <% } else if (!currentUser.isAdmin) { %>
-          <td><img src="<%= drug.imageUrl %>" alt="image"></td>
+          <td><img src="<%= drug.imageUrl %>" class="thumbnail" alt="No image uploaded yet!"></td>
           <td><a href="/view/<%= drug._id %>"><%= drug.name %></a></td>
           <td><%= drug.drugClass %></td>
           <td><%= drug.recommendedDose %></td>
@@ -77,10 +80,13 @@
           <td><%= drug.status %></td>
           <td>
             <!-- TODO:  restrict user from reviewing their own "drug" -->
-            <% if (drug.status == "info pending to be provided" || drug.status == "info pending to be amended"){ %>
+            <% if (drug.status == "info and image pending to be provided" || drug.status == "info pending to be amended") { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
-            <% } else if (drug.status == "info pending to be reviewed"){ %> 
-              <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
+            <% } else if (drug.status == "image pending to be provided") { %>
+              <a href="/upload-image/<%= drug._id %>" class="btn btn-primary">Upload Image</a>
+            <% } else if (drug.status == "info pending to be reviewed" && currentUser !== drug.editedBy) { %>
+              <!-- if currentUser._id != drug.editedBy -->
+                <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
             <% } %>
           </td>
         <% } %>

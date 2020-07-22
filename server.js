@@ -2,14 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const expressLayouts = require("express-ejs-layouts");
 const server = express();
-const PORT = process.env.PORT;
 const session = require("express-session");
-const MongoStore = require('connect-mongo')(session);
+// const MongoStore = require('connect-mongo')(session);
 const flash = require("connect-flash");
 const passport = require("./config/passportConfig");
+const cloudinary = require("cloudinary");
 var moment = require('moment');
 var shortDateFormat = "ddd @ h:mmA"; // TODO // to put in ejs <%= moment(Date()).format(shortDateFormat) %>
-// const checkUser = require("./config/loginBlocker");
 require("dotenv").config();
 
 // connect to MongoDB cloud
@@ -41,6 +40,13 @@ server.use(
   })
 );
 
+// connect to cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDNAME,
+  api_key: process.env.APIKEY,
+  api_secret: process.env.APISECRET,
+});
+
 // passport initialization
 server.use(passport.initialize());
 server.use(passport.session());
@@ -56,7 +62,7 @@ server.locals.moment = moment; // this makes moment available as a variable in e
 server.locals.shortDateFormat = shortDateFormat;
 
 server.get("/", (req, res) => {
-  res.redirect("/dashboard");
+  res.redirect("/intro");
 });
 
 // all routes
@@ -64,6 +70,6 @@ server.use("/", require("./routes/drug.route"));
 server.use(require("./routes/auth.route"));
 
 // connect to PORT
-server.listen(PORT, () =>
-  console.log(`connected to express on ${PORT}`)
+server.listen(process.env.PORT, () =>
+  console.log(`connected to express on ${process.env.PORT}`)
 );

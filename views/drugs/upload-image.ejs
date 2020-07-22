@@ -1,6 +1,6 @@
 <div class="container mt-3">
-  <h2>About <%= drug.name %></h2>
-  <img src="<%= drug.imageUrl %>" alt="image">
+  <h2>Uploading Image for <%= drug.name %></h2>
+  <label style="color: red">No image uploaded yet!</label>
   <div>Drug Class: <%= drug.drugClass %></div>
   <div>Recommended Dose: <%= drug.recommendedDose %></div>
   <div>Description: <%= drug.description %></div>
@@ -20,4 +20,13 @@
       <%= user.firstname %> <%= user.lastname %>
     <% }) %> 
   </div>
+  <div>
+    <label>Upload Image: </label>
+    <form action="/upload-image/<%= drug._id %>" method="POST" enctype="multipart/form-data">
+      <input name="imageUrl" type="file" value="<%= drug.imageUrl %>" />
+      <br>
+      <button type="submit" class="btn btn-primary">Upload Image</button>
+    </form>
+  </div>
+  <br>
 </div>
