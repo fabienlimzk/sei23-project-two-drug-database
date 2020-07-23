@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/user.model");
 const passport = require("../config/passportConfig");
+const isLoggedIn = require("../config/loginBlocker");
 
 router.get("/auth/register", (req, res) => {
   res.render("auth/register");
@@ -58,7 +59,7 @@ router.get("/auth/login", (req, res) => {
   res.render("auth/login");
 });
 
-router.get("/auth/profile/:id", (req, res) => {
+router.get("/auth/profile/:id", isLoggedIn, (req, res) => {
   User.findById(req.params.id)
   .then((user) => {
     res.render("auth/profile", { user });
@@ -68,7 +69,7 @@ router.get("/auth/profile/:id", (req, res) => {
   });
 });
 
-router.post("/auth/profile/:id", (req, res) => {
+router.post("/auth/profile/:id", isLoggedIn, (req, res) => {
   User.findByIdAndUpdate(req.params.id, req.body)
   .then(() => {
     req.flash("success", "Profile updated");
