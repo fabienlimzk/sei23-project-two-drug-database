@@ -23,6 +23,8 @@ router.get("/dashboard", isLoggedIn, async (req, res) => {
     .populate("editedBy")
     .populate("approvedBy")
     .populate("rejectedBy")
+    // console.log(drugs[0].editedBy[0]._id);
+    // console.log(req.user._id);
     res.render("dashboard/index", { user, drugs });
   } catch (error) {
     console.log(error);
@@ -56,9 +58,9 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
                 drugClass,
                 recommendedDose,
                 description,
-                imageUrl: result.url,
+                imageUrl: result.secure_url,
                 createdBy: req.user._id,
-                status: "info pending to be provided",
+                status: "pending information",
               }
             );
             
@@ -96,9 +98,10 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
                 drugClass,
                 recommendedDose,
                 description,
-                imageUrl: result.url,
+                imageUrl: result.secure_url,
                 createdBy: req.user._id,
-                status: "info pending to be reviewed",
+                editedBy: req.user._id,
+                status: "pending review",
               }
             );
       
@@ -140,7 +143,7 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
               recommendedDose,
               description,
               createdBy: req.user._id,
-              status: "info and image pending to be provided",
+              status: "pending information and image",
             }
           );
     
@@ -178,7 +181,7 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
               recommendedDose,
               description,
               createdBy: req.user._id,
-              status: "image pending to be provided",
+              status: "pending image",
             }
           );
     
@@ -239,12 +242,10 @@ router.post("/upload-image/:id", upload.single("imageUrl"), async (req, res) => 
   try {
     if (req.file) {
       cloudinary.uploader.upload(req.file.path, async (result) => {
-        const file = req.file;
-
         let finalData = {
-          imageUrl: "/uploads/" + file.filename,
+          imageUrl: result.secure_url,
           editedBy: req.user._id,
-          status: "info pending to be reviewed",
+          status: "pending review",
         }
 
         let imageUploaded = await Drug.findByIdAndUpdate(req.params.id, finalData);
@@ -291,13 +292,13 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             drugClass: req.body.drugClass,
             recommendedDose: req.body.recommendedDose,
             description: req.body.description,
-            imageUrl: result.url,
+            imageUrl: result.secure_url,
             editedBy: req.user._id,
-            status: "info pending to be reviewed",
+            status: "pending review",
           }
-      
+
           let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-      
+    
           if (editedDrug) {
             User.findByIdAndUpdate(req.user._id, {
               $push: { edited: req.params.id }
@@ -313,13 +314,13 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             drugClass: req.body.drugClass,
             recommendedDose: req.body.recommendedDose,
             description: req.body.description,
-            imageUrl: result.url,
+            imageUrl: result.secure_url,
             editedBy: req.user._id,
-            status: "info pending to be reviewed",
+            status: "pending review",
           }
           
           let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-      
+                
           if (editedDrug) {
             User.findByIdAndUpdate(req.user._id, {
               $push: { edited: req.params.id }
@@ -340,11 +341,11 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
           editedBy: req.user._id,
-          status: "info and image pending to be provided",
+          status: "pending information and image",
         }
-    
+        
         let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-    
+  
         if (editedDrug) {
           User.findByIdAndUpdate(req.user._id, {
             $push: { edited: req.params.id }
@@ -354,18 +355,18 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             res.redirect("/dashboard");
           });
         }
-      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== ""|| drug.imageUrl === "") {
+      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
         let finalData = {
           name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
           editedBy: req.user._id,
-          status: "image pending to be provided",
+          status: "pending image",
         }
         
         let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-    
+  
         if (editedDrug) {
           User.findByIdAndUpdate(req.user._id, {
             $push: { edited: req.params.id }
@@ -374,17 +375,16 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             req.flash("success", "Drug edited!");
             res.redirect("/dashboard");
           });
-        }
-      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" || drug.imageUrl === "") {
+        } 
+      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" && Drug.imageUrl !== "") {
         let finalData = {
           name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
           editedBy: req.user._id,
-          status: "info pending to be reviewed",
+          status: "pending review",
         }
-        
         let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
     
         if (editedDrug) {
@@ -442,7 +442,7 @@ router.post("/review/reject/:id", async (req, res) => {
   try {
     let finalData = {
       rejectedBy: req.user._id,
-      status: "info pending to be amended",
+      status: "pending amendment",
     }
 
     let rejectedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
@@ -458,6 +458,54 @@ router.post("/review/reject/:id", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+  }
+});
+
+router.get("/amendment/:id", isLoggedIn, (req, res) => {
+  Drug.findById(req.params.id)
+  .then((drug) => {
+    res.render("drugs/amendment", { drug });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+});
+
+router.post("/amendment/:id", upload.single("imageUrl"), isLoggedIn, async (req, res) => {
+  try {
+    // all fields != ""
+    if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
+      throw {
+        code: "EMPTY_FIELDS"
+      }
+    } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
+      let finalData = {
+        name: req.body.name,
+        drugClass: req.body.drugClass,
+        recommendedDose: req.body.recommendedDose,
+        description: req.body.description,
+        editedBy: req.user._id,
+        status: "pending review",
+      }
+      
+      let amendedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+
+      if (amendedDrug) {
+        User.findByIdAndUpdate(req.user._id, {
+          $push: { edited: req.params.id }
+        })
+        .then(() => {
+          req.flash("success", "Drug amended!");
+          res.redirect("/dashboard");
+        });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    if (error.code == "EMPTY_FIELDS") {
+      req.flash("error", "Please enter all fields!");
+      res.redirect("/amendment/" + req.params.id);
+    }
   }
 });
 
