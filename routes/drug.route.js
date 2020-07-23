@@ -209,7 +209,7 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
   }
 });
 
-router.get("/view/:id", async (req, res) => {
+router.get("/view/:id", isLoggedIn, async (req, res) => {
   try {
     let drug = await Drug.findById(req.params.id)
     .populate("createdBy")
@@ -222,7 +222,7 @@ router.get("/view/:id", async (req, res) => {
   }
 });
 
-router.get("/upload-image/:id", async (req, res) => {
+router.get("/upload-image/:id", isLoggedIn, async (req, res) => {
   try {
     let drug = await Drug.findById(req.params.id)
     .populate("createdBy")
@@ -235,7 +235,7 @@ router.get("/upload-image/:id", async (req, res) => {
   }
 });
 
-router.post("/upload-image/:id", upload.single("imageUrl"), async (req, res) => {
+router.post("/upload-image/:id", upload.single("imageUrl"), isLoggedIn, async (req, res) => {
   try {
     if (req.file) {
       cloudinary.uploader.upload(req.file.path, async (result) => {
@@ -410,7 +410,7 @@ router.get("/review/:id", isLoggedIn, async (req, res) => {
   }
 });
 
-router.post("/review/approve/:id", async (req, res) => {
+router.post("/review/approve/:id", isLoggedIn, async (req, res) => {
   try {
     let finalData = {
       approvedBy: req.user._id,
@@ -433,7 +433,7 @@ router.post("/review/approve/:id", async (req, res) => {
   }
 });
 
-router.post("/review/reject/:id", async (req, res) => {
+router.post("/review/reject/:id", isLoggedIn, async (req, res) => {
   try {
     let finalData = {
       rejectedBy: req.user._id,
@@ -504,7 +504,7 @@ router.post("/amendment/:id", upload.single("imageUrl"), isLoggedIn, async (req,
   }
 });
 
-router.get("/delete/:id", (req, res) => {
+router.get("/delete/:id", isLoggedIn, (req, res) => {
   if (req.user.isAdmin) {
     Drug.findByIdAndDelete(req.params.id)
     .then((drug) => {
