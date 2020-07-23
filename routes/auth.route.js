@@ -1,13 +1,11 @@
 const router = require("express").Router();
 const User = require("../models/user.model");
 const passport = require("../config/passportConfig");
-const isLoggedIn = require("../config/loginBlocker");
 
 router.get("/auth/register", (req, res) => {
   res.render("auth/register");
 });
 
-// TODO: validate correct email address format and 
 router.post("/auth/register", async (req, res) => {
   console.log(req.body);
   try {
@@ -41,15 +39,10 @@ router.post("/auth/register", async (req, res) => {
       if (savedUser) {
         req.flash("success", "Account have been created successfully!");
         res.redirect("/auth/login");
-        // passport.authenticate("local", {
-        //   successRedirect: "/auth/login", //after login success
-        //   successFlash: "Account have been created successfully!"
-        // })(req, res);
       } 
     } else {
       throw { 
         code: "REGISTER_EXISTS", 
-        // message: "Email already exists!" 
       }
     }
   } catch (error) {
@@ -76,7 +69,6 @@ router.get("/auth/profile/:id", (req, res) => {
 });
 
 router.post("/auth/profile/:id", (req, res) => {
-  // req.body
   User.findByIdAndUpdate(req.params.id, req.body)
   .then(() => {
     req.flash("success", "Profile updated");

@@ -1,13 +1,24 @@
 <div style="text-align: center;">
-  <h1>Drug Database</h1>
-  <p>Hi bye!</p>
-  <table border="1" class="center">
-    <thead>
-        <td>Image</td>
-        <td>Drug Name</td>
-        <td>Drug Class</td>
-        <td>Recommended Dose</td>
-        <td>Description</td>
+  <h1>Welcome to Drug Database</h1>
+  <p>
+    This is a drug database for users to request information of <br>
+    the drugs that he/her do not know, for he/she to share his/her <br>
+    knowledge about the drugs and review other users' shared <br>
+    information about the drugs. Do take note that only verified <br>
+    information of the drugs will be showned at this page. 
+    <br>
+    <br>
+    Please register and share your knowledge with other users!
+  </p>
+  <br>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr id="table-header-names">
+        <th scope="col">Image</th>
+        <th scope="col">Drug Name</th>
+        <th scope="col">Drug Class</th>
+        <th scope="col">Recommended Dose</th>
+        <th scope="col">Description</th>
       </tr>
     </thead>
     <% drugs.forEach((drug) => { %>

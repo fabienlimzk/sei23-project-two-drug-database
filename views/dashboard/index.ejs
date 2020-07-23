@@ -4,30 +4,30 @@
   <% } else if (!currentUser.isAdmin) { %>
     <h1>Dashboard</h1>
   <% } %>
-    <table border="1" class="center">
-    <thead>
-      <tr>
+  <table class="table">
+    <thead class="thead-dark">
+      <tr id="table-header-names">
         <% if (currentUser.isAdmin) { %>
-          <td>Image</td>
-          <td>Drug Name</td>
-          <td>Drug Class</td>
-          <td>Recommended Dose</td>
-          <td>Description</td>
-          <td>Status</td>
-          <td>Created By</td>
-          <td>Edited By</td>
-          <td>Approved By</td>
-          <td>Rejected By</td>
-          <td>Action</td>
-          <td>Delete?</td>
+          <th scope="col">Image</th>
+          <th scope="col">Drug Name</th>
+          <th scope="col">Drug Class</th>
+          <th scope="col">Recommended Dose</th>
+          <th scope="col">Description</th>
+          <th scope="col">Status</th>
+          <th scope="col">Created By</th>
+          <th scope="col">Edited By</th>
+          <th scope="col">Approved By</th>
+          <th scope="col">Rejected By</th>
+          <th scope="col">Action</th>
+          <th scope="col">Delete?</th>
         <% } else if (!currentUser.isAdmin) { %>
-          <td>Image</td>
-          <td>Drug Name</td>
-          <td>Drug Class</td>
-          <td>Recommended Dose</td>
-          <td>Description</td>
-          <td>Status</td>
-          <td>Action</td>
+          <th scope="col">Image</th>
+          <th scope="col">Drug Name</th>
+          <th scope="col">Drug Class</th>
+          <th scope="col">Recommended Dose</th>
+          <th scope="col">Description</th>
+          <th scope="col">Status</th>
+          <th scope="col">Action</th>
         <% } %>
       </tr>
     </thead>
@@ -60,17 +60,17 @@
           <td>
             <!-- TODO:  restrict user from reviewing their own "drug" -->
             <% if (drug.status == "pending information and image" || drug.status == "pending information") { %>
-              <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
+              <a href="/edit/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending amendment") { %>
-              <a href="/amendment/<%= drug._id %>" class="btn btn-primary">Edit</a>
+              <a href="/amendment/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending image") { %>
-              <a href="/upload-image/<%= drug._id %>" class="btn btn-primary">Upload Image</a>
+              <a href="/upload-image/<%= drug._id %>" class="btn btn-dark">Upload Image</a>
             <% } else if (drug.status == "pending review") { %>
               <% drug.editedBy.forEach((editor) => { %>
                 <% if (editor._id == currentUser._id) { %>
                   <% return %>
                 <% } else if (editor._id != currentUser.id) { %>
-                  <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
+                  <a href="/review/<%= drug._id %>" class="btn btn-dark">Review</a>
                 <% } %>
               <%}); %>
             <% } %>
@@ -88,17 +88,17 @@
           <td>
             <!-- TODO:  restrict user from reviewing their own "drug" -->
             <% if (drug.status == "pending information and image" || drug.status == "pending information") { %>
-              <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
+              <a href="/edit/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending amendment") { %>
-              <a href="/amendment/<%= drug._id %>" class="btn btn-primary">Edit</a>
+              <a href="/amendment/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending image") { %>
-            <a href="/upload-image/<%= drug._id %>" class="btn btn-primary">Upload Image</a>
+            <a href="/upload-image/<%= drug._id %>" class="btn btn-dark">Upload Image</a>
             <% } else if (drug.status == "pending review") { %>
               <% drug.editedBy.forEach((editor) => { %>
                 <% if (editor._id == currentUser._id && drug.editedBy != "") { %>
                   <% return %>
                 <% } else if (editor._id != currentUser.id  && drug.editedBy != "") { %>
-                  <a href="/review/<%= drug._id %>" class="btn btn-primary">Review</a>
+                  <a href="/review/<%= drug._id %>" class="btn btn-dark">Review</a>
                 <% } %>
               <%}); %>
             <% } %>

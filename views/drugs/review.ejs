@@ -1,4 +1,4 @@
-<div>
+<div class="container mt-3">
   <h2>Review Information of <%= drug.name %></h2>
   <img src="<%= drug.image %>" alt="image">
   <div>Drug Class: <%= drug.drugClass %></div>
@@ -12,7 +12,7 @@
   </div>
   <br>
   <form action="/review/approve/<%= drug._id %>" method="POST">
-    <button type="submit" class="btn btn-primary">Approve</button>
+    <button type="submit" class="btn btn-dark">Approve</button>
   </form>
   <form action="/review/reject/<%= drug._id %>" method="POST">
     <button type="submit" class="btn btn-danger">Reject</button>
