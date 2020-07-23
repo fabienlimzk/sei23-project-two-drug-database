@@ -284,7 +284,7 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
         // all fields != ""
         if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "") {
           let finalData = {
-            name: req.body.name,
+            // name: req.body.name,
             drugClass: req.body.drugClass,
             recommendedDose: req.body.recommendedDose,
             description: req.body.description,
@@ -306,7 +306,7 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
           }
         } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
           let finalData = {
-            name: req.body.name,
+            // name: req.body.name,
             drugClass: req.body.drugClass,
             recommendedDose: req.body.recommendedDose,
             description: req.body.description,
@@ -332,7 +332,7 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
       // all fields != ""
       if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "" || Drug.imageUrl === "") {
         let finalData = {
-          name: req.body.name,
+          // name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
@@ -351,9 +351,9 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             res.redirect("/dashboard");
           });
         }
-      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "") {
+      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" && Drug.imageUrl === "") {
         let finalData = {
-          name: req.body.name,
+          // name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,
@@ -374,7 +374,7 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
         } 
       } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" && Drug.imageUrl !== "") {
         let finalData = {
-          name: req.body.name,
+          // name: req.body.name,
           drugClass: req.body.drugClass,
           recommendedDose: req.body.recommendedDose,
           description: req.body.description,

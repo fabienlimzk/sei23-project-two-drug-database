@@ -77,7 +77,7 @@
           <td>
             <a href="/delete/<%= drug._id %>" class="btn btn-danger">Yes</a>
           </td>
-        <% } else if (!currentUser.isAdmin) { %>
+        <% } else if (!currentUser.isAdmin && drug.status != "completed") { %>
           <td><img src="<%= drug.imageUrl %>" class="thumbnail" alt="No image uploaded yet!"></td>
           <td><a href="/view/<%= drug._id %>"><%= drug.name %></a></td>
           <td><%= drug.drugClass %></td>
@@ -85,7 +85,7 @@
           <td><%= drug.description %></td>
           <td><%= drug.status %></td>
           <td>
-            <% if (drug.status == "pending information and image" || drug.status == "pending information") { %>
+            <% if (drug.status == "pending information and image" || drug.status == "pending information" && drug.status) { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending amendment") { %>
               <a href="/amendment/<%= drug._id %>" class="btn btn-dark">Edit</a>
