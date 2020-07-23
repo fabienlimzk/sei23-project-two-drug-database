@@ -59,7 +59,7 @@
           </td>
           <td>
             <!-- TODO:  restrict user from reviewing their own "drug" -->
-            <% if (drug.status == "info and image pending to be provided" || drug.status == "info pending to be amended") { %>
+            <% if (drug.status == "info and image pending to be provided" || drug.status == "info pending to be provided" || drug.status == "info pending to be amended") { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
             <% } else if (drug.status == "image pending to be provided") { %>
               <a href="/upload-image/<%= drug._id %>" class="btn btn-primary">Upload Image</a>
@@ -80,7 +80,7 @@
           <td><%= drug.status %></td>
           <td>
             <!-- TODO:  restrict user from reviewing their own "drug" -->
-            <% if (drug.status == "info and image pending to be provided" || drug.status == "info pending to be amended") { %>
+            <% if (drug.status == "info and image pending to be provided" || drug.status == "info pending to be provided" || drug.status == "info pending to be amended") { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-primary">Edit</a>
             <% } else if (drug.status == "image pending to be provided") { %>
               <a href="/upload-image/<%= drug._id %>" class="btn btn-primary">Upload Image</a>

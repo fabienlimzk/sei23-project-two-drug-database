@@ -14,7 +14,7 @@ const drugSchema = Schema(
     imageUrl: String,
     status: {
       type: String,
-      enum: ["info and image pending to be provided", "image pending to be provided", "info pending to be amended", "info pending to be reviewed", "completed"],
+      enum: ["info and image pending to be provided", "info pending to be provided", "image pending to be provided", "info pending to be amended", "info pending to be reviewed", "completed"],
       default: "info and image pending to be provided",
     },
     createdBy: {

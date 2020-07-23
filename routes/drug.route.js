@@ -61,9 +61,10 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
                 status: "info pending to be provided",
               }
             );
-      
+            
             let savedDrug = await drug.save();
-      
+            // console.log(drug.imageUrl);
+
             if (savedDrug) {
               User.findByIdAndUpdate(req.user._id, {
                 $push: { created: drug._id }
