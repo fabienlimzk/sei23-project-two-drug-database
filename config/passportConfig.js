@@ -50,7 +50,7 @@ passport.use(
       User.findOne({ email: email }, function (err, user){
         if (err) return done(err);
 
-        // If no user is found // TODO. remove flash message for now
+        // if no user is found 
         if (!user) return done(null, false, { message: "Incorrect email address." });
 
         // Check if the password is correct

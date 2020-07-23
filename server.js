@@ -8,7 +8,7 @@ const flash = require("connect-flash");
 const passport = require("./config/passportConfig");
 const cloudinary = require("cloudinary");
 var moment = require('moment');
-var shortDateFormat = "ddd @ h:mmA"; // TODO // to put in ejs <%= moment(Date()).format(shortDateFormat) %>
+var shortDateFormat = "ddd @ h:mmA"; // to put in ejs <%= moment(Date()).format(shortDateFormat) %>
 require("dotenv").config();
 
 // connect to MongoDB cloud

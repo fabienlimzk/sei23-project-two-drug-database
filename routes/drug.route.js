@@ -23,8 +23,6 @@ router.get("/dashboard", isLoggedIn, async (req, res) => {
     .populate("editedBy")
     .populate("approvedBy")
     .populate("rejectedBy")
-    // console.log(drugs[0].editedBy[0]._id);
-    // console.log(req.user._id);
     res.render("dashboard/index", { user, drugs });
   } catch (error) {
     console.log(error);
@@ -65,7 +63,6 @@ router.post("/create", upload.single("imageUrl"), isLoggedIn, async (req, res) =
             );
             
             let savedDrug = await drug.save();
-            // console.log(drug.imageUrl);
 
             if (savedDrug) {
               User.findByIdAndUpdate(req.user._id, {
@@ -279,7 +276,6 @@ router.get("/edit/:id", isLoggedIn, (req, res) => {
   });
 });
 
-// TODO: if any of the field(s) is empty, status != "info pending to be reviewed"
 router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res) => {
   try {
     // image uploaded == true
@@ -403,7 +399,6 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
   }
 });
 
-// TODO: same user that provide info cannot review the drug info that he/she provided
 router.get("/review/:id", isLoggedIn, async (req, res) => {
   try {
     let drug = await Drug.findById(req.params.id)

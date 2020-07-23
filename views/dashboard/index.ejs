@@ -58,7 +58,6 @@
             <% }) %> 
           </td>
           <td>
-            <!-- TODO:  restrict user from reviewing their own "drug" -->
             <% if (drug.status == "pending information and image" || drug.status == "pending information") { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending amendment") { %>
@@ -86,7 +85,6 @@
           <td><%= drug.description %></td>
           <td><%= drug.status %></td>
           <td>
-            <!-- TODO:  restrict user from reviewing their own "drug" -->
             <% if (drug.status == "pending information and image" || drug.status == "pending information") { %>
               <a href="/edit/<%= drug._id %>" class="btn btn-dark">Edit</a>
             <% } else if (drug.status == "pending amendment") { %>
