@@ -15,6 +15,11 @@
 ## 2. Approach Taken 
 - This project was originally written in .NET/C# for my polytechnic's Final Year Project, it was packed with a lot of features. It was builded within six months and by a team of four members working on different parts at the same time, I have recreated a simplified version within a week time but with similiar features.
 
+Steps: Create drug information -> Provide information -> Provide image -> Review drug information by other users (approve/reject) -> If approved -> Completed | If rejected -> Amend information -> Review drug information by other users again (approve/reject) -> Repeat the process from "Amend information" again until it is approved
+- Please take note that you cannot review the drug informations that you have provided
+
+Status: "pending information and image", "pending information", "pending image", "pending amendment", "pending review", "completed"
+
 ### [Wireframe](https://wireframe.cc/pro/pp/7eb3e9beb359657)
 <img src="./wireframe/1-Intro.png">
 <img src="./wireframe/2-Login.png">

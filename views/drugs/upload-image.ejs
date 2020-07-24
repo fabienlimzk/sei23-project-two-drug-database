@@ -4,22 +4,6 @@
   <div>Drug Class: <%= drug.drugClass %></div>
   <div>Recommended Dose: <%= drug.recommendedDose %></div>
   <div>Description: <%= drug.description %></div>
-  <div>Created By: <%= drug.createdBy.firstname %> <%= drug.createdBy.lastname %></div>
-  <div>Edited By: 
-    <% drug.editedBy.forEach((user) => { %>
-      <%= user.firstname %> <%= user.lastname %>
-    <% }) %> 
-  </div>
-  <div>Approved By: 
-    <% drug.approvedBy.forEach((user) => { %>
-      <%= user.firstname %> <%= user.lastname %>
-    <% }) %> 
-  </div>
-  <div>Rejected By: 
-    <% drug.rejectedBy.forEach((user) => { %>
-      <%= user.firstname %> <%= user.lastname %>
-    <% }) %> 
-  </div>
   <div>
     <form action="/upload-image/<%= drug._id %>" method="POST" enctype="multipart/form-data">
       <label>Upload Image: </label>

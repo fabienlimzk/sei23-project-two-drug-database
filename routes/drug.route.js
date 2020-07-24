@@ -290,7 +290,7 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             description: req.body.description,
             imageUrl: result.secure_url,
             editedBy: req.user._id,
-            status: "pending review",
+            status: "pending information",
           }
 
           let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
@@ -330,7 +330,27 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
       });
     } else if (!req.file) {
       // all fields != ""
-      if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "" || Drug.imageUrl === "") {
+      if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" && Drug.imageUrl !== "") {
+        let finalData = {
+          // name: req.body.name,
+          drugClass: req.body.drugClass,
+          recommendedDose: req.body.recommendedDose,
+          description: req.body.description,
+          editedBy: req.user._id,
+          status: "pending review",
+        }
+        let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
+    
+        if (editedDrug) {
+          User.findByIdAndUpdate(req.user._id, {
+            $push: { edited: req.params.id }
+          })
+          .then(() => {
+            req.flash("success", "Drug edited!");
+            res.redirect("/dashboard");
+          });
+        }
+      } else if (req.body.drugClass === "" || req.body.recommendedDose === "" || req.body.description === "" || Drug.imageUrl === "") {
         let finalData = {
           // name: req.body.name,
           drugClass: req.body.drugClass,
@@ -372,26 +392,6 @@ router.post("/edit/:id", upload.single("imageUrl"), isLoggedIn, async (req, res)
             res.redirect("/dashboard");
           });
         } 
-      } else if (req.body.drugClass !== "" && req.body.recommendedDose !== "" && req.body.description !== "" && Drug.imageUrl !== "") {
-        let finalData = {
-          // name: req.body.name,
-          drugClass: req.body.drugClass,
-          recommendedDose: req.body.recommendedDose,
-          description: req.body.description,
-          editedBy: req.user._id,
-          status: "pending review",
-        }
-        let editedDrug = await Drug.findByIdAndUpdate(req.params.id, finalData);
-    
-        if (editedDrug) {
-          User.findByIdAndUpdate(req.user._id, {
-            $push: { edited: req.params.id }
-          })
-          .then(() => {
-            req.flash("success", "Drug edited!");
-            res.redirect("/dashboard");
-          });
-        }
       }
     }
   } catch (error) {
