@@ -3,6 +3,7 @@
     <h1>Admin Dashboard</h1>
   <% } else if (!currentUser.isAdmin) { %>
     <h1>Dashboard</h1>
+    <p>* Please take note that only admins can delete the database.</p>
   <% } %>
   <table class="table">
     <thead class="thead-dark">

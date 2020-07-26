@@ -7,9 +7,9 @@
 - JavaScript
 - [Node.js](https://nodejs.org/en/)
 - [MongoDB](https://www.mongodb.com/)
-- [Express](https://expressjs.com/)
+- [Express.js](https://expressjs.com/)
 - [Embedded JavaScript templates - EJS](https://ejs.co/)
-- [Cloudinary API](https://cloudinary.com/)
+- [Cloudinay](https://cloudinary.com/)
 - [Wireframe.cc](https://wireframe.cc/)
 
 ## 2. Approach Taken 
